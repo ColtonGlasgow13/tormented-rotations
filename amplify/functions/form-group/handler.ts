@@ -81,6 +81,10 @@ const createGroupTransaction = async (userRequests: UserRequest[]) => {
 
   const groupCreatedTime = new Date();
   const newId = randomUUID();
+  const groupHostUsername = userRequests[0].username;
+  const groupJoinerUsernames = userRequests
+    .slice(1)
+    .map((userRequest) => userRequest.username);
 
   const transactItems: TransactWriteItem[] = [];
 
@@ -108,6 +112,8 @@ const createGroupTransaction = async (userRequests: UserRequest[]) => {
             groupId: newId,
             username: userRequest.username,
             msElapsedForPlacement: msElapsedForPlacement,
+            groupHost: groupHostUsername,
+            groupJoiners: groupJoinerUsernames,
             createdAt: groupCreatedTime.toISOString(),
             updatedAt: groupCreatedTime.toISOString(),
           }),

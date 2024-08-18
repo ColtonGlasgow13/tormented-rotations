@@ -12,6 +12,8 @@ const schema = a.schema({
       groupId: a.id().required(),
       username: a.string().required(),
       msElapsedForPlacement: a.integer().required(),
+      groupHost: a.string().required(),
+      groupJoiners: a.string().required().array().required(),
     })
     .identifier(["groupId", "username"])
     .authorization((allow) => [allow.guest()]),

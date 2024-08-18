@@ -1,22 +1,25 @@
 "use client";
 
 import { DiabloButton, DiabloInput } from "@/components";
+import useGroupPlacementSubscription from "@/hooks/useGroupPlacementSubscription";
 import { client } from "@/utils/amplifyUtils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [username, setUsername] = useState<string>("");
   const [currentlyInQueue, setCurrentlyInQueue] = useState<boolean>(false);
+  const { group, mounted } = useGroupPlacementSubscription(
+    username,
+    currentlyInQueue
+  );
 
-  const createRequest = async () => {
-    try {
-      setCurrentlyInQueue(true);
-      await client.models.Request.create({ username });
-    } catch (error) {
-      console.error("Failed to create request:", error);
-      setCurrentlyInQueue(false);
+  // Wait until websocket is mounted before sending request
+  // Otherwise, dynamo is so fast the group might get made before the websocket is established
+  useEffect(() => {
+    if (mounted) {
+      client.models.Request.create({ username });
     }
-  };
+  }, [mounted, username]);
 
   return (
     <main className="flex min-h-screen flex-col items-center p-24">
@@ -31,7 +34,7 @@ export default function Home() {
       <div className="flex items-start mt-8">
         <DiabloButton
           label="Test Button"
-          onClick={createRequest}
+          onClick={() => setCurrentlyInQueue(true)}
           disabled={currentlyInQueue}
         />
       </div>
