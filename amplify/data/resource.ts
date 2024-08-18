@@ -9,9 +9,11 @@ const schema = a.schema({
     .authorization((allow) => [allow.guest()]),
   GroupPlacement: a
     .model({
+      groupId: a.id().required(),
       username: a.string().required(),
       msElapsedForPlacement: a.integer().required(),
     })
+    .identifier(["groupId", "username"])
     .authorization((allow) => [allow.guest()]),
 });
 
