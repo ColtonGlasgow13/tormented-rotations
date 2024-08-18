@@ -9,6 +9,7 @@ import { marshall } from "@aws-sdk/util-dynamodb";
 import { randomUUID } from "crypto";
 
 interface UserRequest {
+  id: string;
   username: string;
   createdAt: string;
 }
@@ -59,8 +60,9 @@ const getOldestUsernames = async (): Promise<UserRequest[] | null> => {
       // Get the first 4 items (the oldest ones)
       const oldestItems = items.slice(0, 4);
 
-      // Extract and return the usernames of these 4 items
+      // Extract and return these 4 items
       return oldestItems.map((item) => ({
+        id: item.id as string,
         username: item.username as string,
         createdAt: item.createdAt as string,
       }));
@@ -80,7 +82,6 @@ const createGroupTransaction = async (userRequests: UserRequest[]) => {
   }
 
   const groupCreatedTime = new Date();
-  const newId = randomUUID();
   const groupHostUsername = userRequests[0].username;
   const groupJoinerUsernames = userRequests
     .slice(1)
@@ -99,9 +100,9 @@ const createGroupTransaction = async (userRequests: UserRequest[]) => {
       {
         Delete: {
           TableName: request_table_name,
-          ConditionExpression: "attribute_exists(username)",
+          ConditionExpression: "attribute_exists(id)",
           Key: marshall({
-            username: userRequest.username,
+            id: userRequest.id,
           }),
         },
       },
@@ -109,8 +110,7 @@ const createGroupTransaction = async (userRequests: UserRequest[]) => {
         Put: {
           TableName: groupPlacement_table_name,
           Item: marshall({
-            groupId: newId,
-            username: userRequest.username,
+            requestId: userRequest.id,
             msElapsedForPlacement: msElapsedForPlacement,
             groupHost: groupHostUsername,
             groupJoiners: groupJoinerUsernames,
