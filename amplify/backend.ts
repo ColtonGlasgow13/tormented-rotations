@@ -25,7 +25,12 @@ backend.formGroup.resources.lambda.addEventSource(eventSource);
 
 backend.formGroup.resources.lambda.addToRolePolicy(
   new iam.PolicyStatement({
-    actions: ["dynamodb:Scan"],
+    actions: [
+      "dynamodb:Scan",
+      "dynamodb:DeleteItem",
+      "dynamodb:PutItem",
+      "dynamodb:ConditionCheckItem",
+    ],
     resources: ["*"],
   })
 );
