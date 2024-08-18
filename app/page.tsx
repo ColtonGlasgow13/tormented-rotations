@@ -10,6 +10,7 @@ export default function Home() {
   const [currentlyInQueue, setCurrentlyInQueue] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string | null>(null);
   const [group, setGroup] = useState<Group | null>(null);
+  const [updatedAt, setUpdatedAt] = useState<string | null>(null);
 
   const sendRequest = async () => {
     setCurrentlyInQueue(true);
@@ -21,6 +22,7 @@ export default function Home() {
     }
 
     setRequestId(data.id);
+    setUpdatedAt(data.updatedAt);
   };
 
   useEffect(() => {
@@ -35,16 +37,64 @@ export default function Home() {
           if (data) {
             setGroup({ host: data.groupHost, joiners: data.groupJoiners });
             setRequestId(null);
+            setCurrentlyInQueue(false);
           }
         } catch (error) {
           console.error("Error polling data:", error);
           clearInterval(intervalId);
         }
-      }, 1000);
+      }, 3000);
 
       return () => clearInterval(intervalId);
     }
   }, [requestId, setGroup, setRequestId]);
+
+  // Refresh the request every 30 seconds based on updatedAt value
+  useEffect(() => {
+    if (requestId && updatedAt) {
+      const refreshRequest = async () => {
+        try {
+          const { data, errors } = await client.models.Request.update({
+            id: requestId,
+            username,
+          });
+
+          if (!data) {
+            console.error(errors);
+            throw new Error("Failed to refresh request");
+          }
+
+          setUpdatedAt(data.updatedAt); // Update the updatedAt with the new value from the server
+
+          // Schedule the next refresh based on the new updatedAt
+          const timeSinceLastUpdate =
+            new Date().getTime() - new Date(data.updatedAt).getTime();
+          const timeUntilNextRefresh = Math.max(30000 - timeSinceLastUpdate, 0);
+
+          setTimeout(refreshRequest, timeUntilNextRefresh - 5 * 1000);
+        } catch (error) {
+          console.error("Error refreshing request:", error);
+          setCurrentlyInQueue(false);
+        }
+      };
+
+      // Calculate the initial time until the first refresh
+      const initialTimeSinceLastUpdate =
+        new Date().getTime() - new Date(updatedAt).getTime();
+      const initialTimeUntilNextRefresh = Math.max(
+        30000 - initialTimeSinceLastUpdate,
+        0
+      );
+
+      // Schedule the first refresh 5 seconds early to account for slow connections
+      const refreshTimeoutId = setTimeout(
+        refreshRequest,
+        initialTimeUntilNextRefresh - 5 * 1000
+      );
+
+      return () => clearTimeout(refreshTimeoutId);
+    }
+  }, [requestId, updatedAt, username]);
 
   return (
     <main className="flex min-h-screen flex-col items-center p-24">
@@ -53,15 +103,15 @@ export default function Home() {
         <DiabloInput
           value={username}
           onChange={setUsername}
-          disabled={currentlyInQueue}
+          disabled={currentlyInQueue || !!group}
         />
       </div>
 
       <div className="flex items-start mt-8">
         <DiabloButton
-          label="Test Button"
+          label="Find a Group"
           onClick={sendRequest}
-          disabled={currentlyInQueue}
+          disabled={currentlyInQueue || !!group}
         />
       </div>
       {group && (
