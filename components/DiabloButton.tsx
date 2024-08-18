@@ -3,13 +3,15 @@
 import React, { useState } from "react";
 
 interface DiabloButtonProps {
-  label: string;
+  bossName: string; // Changed label to bossName
+  averageTime: string; // New prop for average time until group formation
   onClick: () => void;
   disabled?: boolean;
 }
 
 const DiabloButton: React.FC<DiabloButtonProps> = ({
-  label,
+  bossName,
+  averageTime,
   onClick,
   disabled = false,
 }) => {
@@ -20,7 +22,7 @@ const DiabloButton: React.FC<DiabloButtonProps> = ({
 
   return (
     <button
-      className={`relative inline-block py-3 px-6 text-lg font-bold uppercase transition-transform duration-150 transform ${
+      className={`relative inline-block py-6 px-12 text-2xl font-bold uppercase transition-transform duration-150 transform ${
         disabled
           ? "bg-gray-600 text-gray-400 border-gray-600 cursor-not-allowed"
           : `text-gray-100 ${isPressed ? "scale-95 bg-red-900" : "scale-100"} ${
@@ -33,7 +35,12 @@ const DiabloButton: React.FC<DiabloButtonProps> = ({
       onMouseLeave={!disabled ? handleMouseUp : undefined}
       disabled={disabled}
     >
-      {label}
+      <div className="flex flex-col items-center">
+        <span className="text-lg text-gray-400">Find a group for</span>{" "}
+        <span className="text-4xl mb-8">{bossName}</span>{" "}
+        <span className="text-lg text-gray-400">Average queue time:</span>{" "}
+        <span className="text-4xl mt-2">{averageTime}</span>{" "}
+      </div>
     </button>
   );
 };

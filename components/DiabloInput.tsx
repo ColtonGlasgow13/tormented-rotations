@@ -15,32 +15,45 @@ const DiabloInput: React.FC<DiabloInputProps> = ({
   placeholder = "ILikeTrains#12345",
   disabled = false,
 }) => {
+  const [inputValue, setInputValue] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
   const [isValid, setIsValid] = useState(true);
 
   const validateInput = (input: string) => {
-    const regex = /#\d{4,}$/;
+    // Regular expression that checks:
+    // - The string should not contain any spaces
+    // - The string should end with a pound sign followed by at least 4 digits
+    const regex = /^[^\s]+#\d{4,}$/;
     return regex.test(input);
   };
 
   const handleFocus = () => !disabled && setIsFocused(true);
+
   const handleBlur = () => {
     setIsFocused(false);
-    setIsValid(validateInput(value));
+    const valid = validateInput(inputValue);
+    setIsValid(valid);
+
+    if (valid) {
+      onChange(inputValue);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
     if (!disabled) {
-      onChange(newValue);
-      setIsValid(validateInput(newValue));
+      setInputValue(e.target.value);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!disabled && e.key === "Enter") {
       (e.target as HTMLInputElement).blur();
-      setIsValid(validateInput(value));
+      const valid = validateInput(inputValue);
+      setIsValid(valid);
+
+      if (valid) {
+        onChange(inputValue);
+      }
     }
   };
 
@@ -56,7 +69,7 @@ const DiabloInput: React.FC<DiabloInputProps> = ({
                 isValid ? "border-red-800" : "border-red-600"
               } text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-800`
         }`}
-        value={value}
+        value={inputValue}
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
