@@ -20,7 +20,10 @@ const DiabloInput: React.FC<DiabloInputProps> = ({
   const [isValid, setIsValid] = useState(true);
 
   const validateInput = (input: string) => {
-    const regex = /#\d{4,}$/;
+    // Regular expression that checks:
+    // - The string should not contain any spaces
+    // - The string should end with a pound sign followed by at least 4 digits
+    const regex = /^[^\s]+#\d{4,}$/;
     return regex.test(input);
   };
 
