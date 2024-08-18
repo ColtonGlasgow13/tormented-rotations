@@ -19,7 +19,7 @@ const GroupInfo: React.FC<GroupInfoProps> = ({ group, username }) => {
     <div className="p-4 bg-gray-800 text-gray-100 border-2 border-red-800 rounded-md">
       {isHost ? (
         <div>
-          <h2 className="text-xl font-bold mb-2">You are the host!</h2>
+          <h2 className="text-xl font-bold mb-4">You are the host!</h2>
           <p>The following users will be sending you friend requests:</p>
           <ul className="list-disc list-inside mt-2">
             {group.joiners.map((joiner, index) => (
@@ -31,7 +31,7 @@ const GroupInfo: React.FC<GroupInfoProps> = ({ group, username }) => {
         </div>
       ) : (
         <div>
-          <h2 className="text-xl font-bold mb-2">Friend Request Required</h2>
+          <h2 className="text-2xl font-bold mb-4">Your group is ready!</h2>
           <p>
             The host of this group is{" "}
             <span className="font-bold">{group.host}</span>.

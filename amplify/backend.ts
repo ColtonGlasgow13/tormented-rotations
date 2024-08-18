@@ -30,6 +30,7 @@ backend.formGroup.resources.lambda.addToRolePolicy(
       "dynamodb:DeleteItem",
       "dynamodb:PutItem",
       "dynamodb:ConditionCheckItem",
+      "dynamodb:BatchWriteItem",
     ],
     resources: ["*"],
   })
