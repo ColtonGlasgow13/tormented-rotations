@@ -13,7 +13,6 @@ export default function Home() {
   const [requestId, setRequestId] = useState<string | null>(null);
   const [group, setGroup] = useState<Group | null>(null);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
-  const [triggerPulse, setTriggerPulse] = useState<boolean>(false);
 
   usePollForGroup(requestId, setGroup, setRequestId, setCurrentlyInQueue);
 
@@ -46,7 +45,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-24">
+    <main className="flex min-h-screen flex-col items-center p-16">
       <h1 className="text-5xl font-black">Tormented Rotations</h1>
 
       <div className="flex flex-col items-center mt-8">
@@ -57,7 +56,7 @@ export default function Home() {
           disabled={currentlyInQueue || !!group}
         />
       </div>
-      <div className="flex items-start mt-24">
+      <div className="flex items-start mt-8">
         <DiabloButton
           bossName="Lord Zir"
           onClick={handleQueueClick}
@@ -66,7 +65,7 @@ export default function Home() {
         />
       </div>
       {group && (
-        <div className="mt-16">
+        <div className="mt-8">
           <GroupInfo group={group} username={username} />
         </div>
       )}
