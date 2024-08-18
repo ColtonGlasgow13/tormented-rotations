@@ -15,6 +15,7 @@ const DiabloInput: React.FC<DiabloInputProps> = ({
   placeholder = "ILikeTrains#12345",
   disabled = false,
 }) => {
+  const [inputValue, setInputValue] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
   const [isValid, setIsValid] = useState(true);
 
@@ -24,23 +25,32 @@ const DiabloInput: React.FC<DiabloInputProps> = ({
   };
 
   const handleFocus = () => !disabled && setIsFocused(true);
+
   const handleBlur = () => {
     setIsFocused(false);
-    setIsValid(validateInput(value));
+    const valid = validateInput(inputValue);
+    setIsValid(valid);
+
+    if (valid) {
+      onChange(inputValue);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
     if (!disabled) {
-      onChange(newValue);
-      setIsValid(validateInput(newValue));
+      setInputValue(e.target.value);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!disabled && e.key === "Enter") {
       (e.target as HTMLInputElement).blur();
-      setIsValid(validateInput(value));
+      const valid = validateInput(inputValue);
+      setIsValid(valid);
+
+      if (valid) {
+        onChange(inputValue);
+      }
     }
   };
 
@@ -56,7 +66,7 @@ const DiabloInput: React.FC<DiabloInputProps> = ({
                 isValid ? "border-red-800" : "border-red-600"
               } text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-800`
         }`}
-        value={value}
+        value={inputValue}
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
@@ -66,7 +76,7 @@ const DiabloInput: React.FC<DiabloInputProps> = ({
       />
       {!isValid && !disabled && (
         <p className="text-red-600 mt-1">
-          {'Use your full Battle.net username, eg. "ILoveDiablo#1234"'}
+          Use your full Battle.net username, eg. "ILoveDiablo#1234"
         </p>
       )}
     </div>
