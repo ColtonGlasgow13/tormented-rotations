@@ -1,8 +1,6 @@
 import type { DynamoDBStreamHandler } from "aws-lambda";
-import { unmarshall } from "@aws-sdk/util-dynamodb";
-import { DynamoDB } from "aws-sdk";
 import { DynamoDBDocumentClient, ScanCommand } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBClient, TransactGetItem } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
 // Initialize client
 const client = new DynamoDBClient();
@@ -14,14 +12,8 @@ export const handler: DynamoDBStreamHandler = async (event) => {
     // logger.info(`Event Type: ${record.eventName}`);
 
     if (record.eventName === "INSERT") {
-      if (!record.dynamodb || !record.dynamodb.NewImage) {
-        return {
-          batchItemFailures: [],
-        };
-      }
-      const temp = unmarshall(
-        record.dynamodb.NewImage as DynamoDB.DocumentClient.AttributeMap
-      );
+      const oldestUsernames = await getOldestUsernames();
+      console.log(oldestUsernames);
     }
   }
   console.log(`Successfully processed ${event.Records.length} records.`);
@@ -33,7 +25,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
 
 const getOldestUsernames = async (): Promise<string[] | null> => {
   const params = {
-    TableName: "YourTableName",
+    TableName: "Request-npbf4fy27zfgrlnwwmvmo24tfa-NONE",
   };
 
   try {
