@@ -23,6 +23,7 @@ interface UserRequest {
   id: string;
   username: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 // Initialize client
@@ -64,6 +65,7 @@ const scanTable = async (): Promise<UserRequest[]> => {
       id: item.id as string,
       username: item.username as string,
       createdAt: item.createdAt as string,
+      updatedAt: item.updatedAt as string,
     }));
   } catch (err) {
     console.error("Error scanning table:", err);
@@ -80,8 +82,8 @@ const separateExpiredRequests = (
   const valid: UserRequest[] = [];
 
   for (const request of requests) {
-    const createdAtTime = new Date(request.createdAt).getTime();
-    const timeElapsed = currentTime - createdAtTime;
+    const updatedAtTime = new Date(request.updatedAt).getTime();
+    const timeElapsed = currentTime - updatedAtTime;
 
     if (timeElapsed > REQUEST_LIFETIME_MS) {
       expired.push(request);

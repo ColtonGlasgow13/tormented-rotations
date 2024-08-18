@@ -66,7 +66,7 @@ const DiabloInput: React.FC<DiabloInputProps> = ({
       />
       {!isValid && !disabled && (
         <p className="text-red-600 mt-1">
-          Use your full Battle.net username, eg. "ILoveDiablo#1234"
+          {'Use your full Battle.net username, eg. "ILoveDiablo#1234"'}
         </p>
       )}
     </div>
