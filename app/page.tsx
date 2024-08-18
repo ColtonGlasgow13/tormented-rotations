@@ -3,7 +3,7 @@
 import { DiabloButton, DiabloInput, GroupInfo } from "@/components";
 import { Group } from "@/types";
 import { client } from "@/utils/amplifyUtils";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 export default function Home() {
   const [username, setUsername] = useState<string>("");
@@ -66,10 +66,7 @@ export default function Home() {
       </div>
       {group && (
         <div className="mt-16">
-          <GroupInfo
-            group={{ host: "bob", joiners: ["bill", "brent", "been"] }}
-            username="bob"
-          />
+          <GroupInfo group={group} username={username} />
         </div>
       )}
     </main>
