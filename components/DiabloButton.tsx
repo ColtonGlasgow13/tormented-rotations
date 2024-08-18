@@ -5,9 +5,14 @@ import React, { useState } from "react";
 interface DiabloButtonProps {
   label: string;
   onClick: () => void;
+  disabled?: boolean;
 }
 
-const DiabloButton: React.FC<DiabloButtonProps> = ({ label, onClick }) => {
+const DiabloButton: React.FC<DiabloButtonProps> = ({
+  label,
+  onClick,
+  disabled = false,
+}) => {
   const [isPressed, setIsPressed] = useState(false);
 
   const handleMouseDown = () => setIsPressed(true);
@@ -15,15 +20,18 @@ const DiabloButton: React.FC<DiabloButtonProps> = ({ label, onClick }) => {
 
   return (
     <button
-      className={`relative inline-block py-3 px-6 text-lg font-bold text-gray-100 uppercase transition-transform duration-150 transform ${
-        isPressed ? "scale-95 bg-red-900" : "scale-100"
-      } ${
-        isPressed ? "bg-red-900" : "bg-gray-900"
-      } border-2 border-red-800 shadow-[0_4px_0_#8a0303,0_4px_15px_rgba(0,0,0,0.75)] hover:bg-red-800 hover:border-gray-100 hover:-translate-y-2 hover:shadow-[0_6px_0_#8a0303,0_6px_20px_rgba(0,0,0,0.85)]`}
-      onClick={onClick}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
+      className={`relative inline-block py-3 px-6 text-lg font-bold uppercase transition-transform duration-150 transform ${
+        disabled
+          ? "bg-gray-600 text-gray-400 border-gray-600 cursor-not-allowed"
+          : `text-gray-100 ${isPressed ? "scale-95 bg-red-900" : "scale-100"} ${
+              isPressed ? "bg-red-900" : "bg-gray-900"
+            } border-2 border-red-800 shadow-[0_4px_0_#8a0303,0_4px_15px_rgba(0,0,0,0.75)] hover:bg-red-800 hover:border-gray-100 hover:-translate-y-2 hover:shadow-[0_6px_0_#8a0303,0_6px_20px_rgba(0,0,0,0.85)]`
+      }`}
+      onClick={!disabled ? onClick : undefined}
+      onMouseDown={!disabled ? handleMouseDown : undefined}
+      onMouseUp={!disabled ? handleMouseUp : undefined}
+      onMouseLeave={!disabled ? handleMouseUp : undefined}
+      disabled={disabled}
     >
       {label}
     </button>

@@ -6,9 +6,8 @@ import { formGroup } from "./functions/form-group/resource";
 import { DynamoEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { StartingPosition } from "aws-cdk-lib/aws-lambda";
 
-/**
- * @see https://docs.amplify.aws/react/build-a-backend/ to add storage, functions, and more
- */
+import * as iam from "aws-cdk-lib/aws-iam";
+
 const backend = defineBackend({
   auth,
   data,
@@ -23,3 +22,15 @@ const eventSource = new DynamoEventSource(
 );
 
 backend.formGroup.resources.lambda.addEventSource(eventSource);
+
+backend.formGroup.resources.lambda.addToRolePolicy(
+  new iam.PolicyStatement({
+    actions: [
+      "dynamodb:Scan",
+      "dynamodb:DeleteItem",
+      "dynamodb:PutItem",
+      "dynamodb:ConditionCheckItem",
+    ],
+    resources: ["*"],
+  })
+);

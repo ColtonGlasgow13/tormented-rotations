@@ -5,15 +5,15 @@ const schema = a.schema({
     .model({
       username: a.string().required(),
     })
-    .identifier(["username"])
     .authorization((allow) => [allow.guest()]),
   GroupPlacement: a
     .model({
-      groupId: a.id().required(),
-      username: a.string().required(),
+      requestId: a.id().required(),
       msElapsedForPlacement: a.integer().required(),
+      groupHost: a.string().required(),
+      groupJoiners: a.string().required().array().required(),
     })
-    .identifier(["groupId", "username"])
+    .identifier(["requestId"])
     .authorization((allow) => [allow.guest()]),
 });
 
