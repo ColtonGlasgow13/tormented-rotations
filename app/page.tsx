@@ -8,7 +8,12 @@ export default function Home() {
   const [username, setUsername] = useState<string>("");
 
   const createRequest = async () => {
-    await client.models.Request.create({ username: "testUsername" });
+    try {
+      await client.models.Request.create({ username });
+      console.log(`Request created for username: ${username}`);
+    } catch (error) {
+      console.error("Failed to create request:", error);
+    }
   };
 
   return (
