@@ -1,21 +1,17 @@
 "use client";
 
-import { client } from "@/utils/amplifyUtils";
 import React, { useState } from "react";
 
 interface DiabloButtonProps {
   label: string;
+  onClick: () => void;
 }
 
-const DiabloButton: React.FC<DiabloButtonProps> = ({ label }) => {
+const DiabloButton: React.FC<DiabloButtonProps> = ({ label, onClick }) => {
   const [isPressed, setIsPressed] = useState(false);
 
   const handleMouseDown = () => setIsPressed(true);
   const handleMouseUp = () => setIsPressed(false);
-
-  const createRequest = async () => {
-    await client.models.Request.create({ username: "testUsername" });
-  };
 
   return (
     <button
@@ -24,7 +20,7 @@ const DiabloButton: React.FC<DiabloButtonProps> = ({ label }) => {
       } ${
         isPressed ? "bg-red-900" : "bg-gray-900"
       } border-2 border-red-800 shadow-[0_4px_0_#8a0303,0_4px_15px_rgba(0,0,0,0.75)] hover:bg-red-800 hover:border-gray-100 hover:-translate-y-2 hover:shadow-[0_6px_0_#8a0303,0_6px_20px_rgba(0,0,0,0.85)]`}
-      onClick={createRequest}
+      onClick={onClick}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
